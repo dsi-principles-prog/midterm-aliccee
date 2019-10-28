@@ -5,20 +5,23 @@ output: html_notebook
 
 Right now, we want to calculate the differnce of each parameters. This can help us to see if the changes in rating matches the changes of each countries' happiness score. 
 
-```{r}
+```{r difference in happiness rank}
 Happiness_Rank_Difference<- function(df, y,x){
   df %>% 
   mutate(Happiness_Rank_Difference= {{y}}-{{x}}) 
 }
 ```
 
-```{r}
+
+Test and assert the differnt funciton.
+```{r test Happiness_Rank_Difference function}
 Happiness_Rank_Difference(df1,happiness_rank.y, happiness_rank.x) %>% 
   select(happiness_rank.y, happiness_rank.x,Happiness_Rank_Difference) %>% 
   assert(within_bounds(lower.bound = -Inf, upper.bound = Inf, allow.na = FALSE), Happiness_Rank_Difference)
 ```
 
 
+Create function of difference in Economics
 ```{r}
 Economics_Difference <-function(df,y,x){
   df %>% 
@@ -26,12 +29,14 @@ Economics_Difference <-function(df,y,x){
 }
 ```
 
-```{r}
+```{r test Economics_Difference function}
 Economics_Difference(df1, economy_gdp_per_capita.y, economy_gdp_per_capita.x) %>% 
   select(economy_gdp_per_capita.y, economy_gdp_per_capita.x, Economics_Difference) %>% 
   assert(within_bounds(lower.bound = -Inf, upper.bound = Inf, allow.na = FALSE), Economics_Difference)
 ```
 
+
+Create function of difference in Family.
 
 ```{r}
 Family_Difference <- function(df,y,x){
@@ -40,21 +45,21 @@ Family_Difference <- function(df,y,x){
 }
 ```
 
-```{r}
+
+```{r test Family_Difference function}
 Family_Difference(df1,family.y,family.x) %>% 
   select(family.y,family.x,Family_Difference) %>% 
   assert(within_bounds(lower.bound = -Inf, upper.bound = Inf, allow.na = FALSE), Family_Difference)
 ```
 
-
+Create function of difference in Health.
 ```{r}
-Health_Difference <- function(df,y,x){
-  df %>% 
-  mutate(Health_Difference= {{y}}-{{x}})
-}
+#Health_Difference
 ```
 
-```{r}
+
+
+```{r test Health_Difference function}
 Health_Difference(df1,health_life_expectancy.y,health_life_expectancy.x) %>% 
   select(health_life_expectancy.y,health_life_expectancy.x, Health_Difference) %>% 
   assert(within_bounds(lower.bound = -Inf, upper.bound = Inf, allow.na = FALSE), Health_Difference)
@@ -63,7 +68,7 @@ Health_Difference(df1,health_life_expectancy.y,health_life_expectancy.x) %>%
 
 In the original dataset, we have one colomn called region. I want to create a new feature of continents to better group those countries. 
 
-```{r}
+```{r get continent function}
 get_continent <- function(df, x){
   
   return_continent <- function(country){ 
@@ -89,51 +94,49 @@ get_continent <- function(df, x){
 }
 ```
 
-```{r}
+```{r test get_continent function}
 get_continent(df1, country) %>% 
   select(country, continent) %>% 
   assert(in_set("Europe","Australia","Asia","North_America","South_America","Africa", allow.na = FALSE), continent)
-
 ```
 
-```{r}
+I want to divide the happiness ranks into four levels, and label them starting from A to D. Hopefully I can see some patterns here.
+```{r get level for happiness level}
 get_level <- function(df, x, y){
 
   df %>%
-    mutate(happiness_level.x= case_when({{x}} < quantile({{x}}, 0.25)[[1]] ~ "D",
-                                      {{x}} >= quantile({{x}}, 0.25)[[1]] & {{x}} < median({{x}}) ~ "C",
-                                      {{x}} >= median({{x}}) & {{x}} < quantile({{x}}, 0.75)[[1]] ~ "B",
-                                      {{x}} >= quantile({{x}}, 0.75)[[1]] ~ "A"
+    mutate(happiness_level.x= case_when({{x}} < quantile({{x}}, 0.25)[[1]] ~ "A",
+                                      {{x}} >= quantile({{x}}, 0.25)[[1]] & {{x}} < median({{x}}) ~ "B",
+                                      {{x}} >= median({{x}}) & {{x}} < quantile({{x}}, 0.75)[[1]] ~ "C",
+                                      {{x}} >= quantile({{x}}, 0.75)[[1]] ~ "D"
                              )) %>%
     mutate(happiness_level.x=as.factor(happiness_level.x)) %>%
-    mutate(happiness_level.y= case_when({{y}} < quantile({{y}}, 0.25)[[1]] ~ "D",
-                                      {{y}} >= quantile({{y}}, 0.25)[[1]] & {{y}} < median({{y}}) ~ "C",
-                                      {{y}} >= median({{y}}) & {{y}} < quantile({{y}}, 0.75)[[1]] ~ "B",
-                                      {{y}} >= quantile({{y}}, 0.75)[[1]] ~ "A"
+    mutate(happiness_level.y= case_when({{y}} < quantile({{y}}, 0.25)[[1]] ~ "A",
+                                      {{y}} >= quantile({{y}}, 0.25)[[1]] & {{y}} < median({{y}}) ~ "B",
+                                      {{y}} >= median({{y}}) & {{y}} < quantile({{y}}, 0.75)[[1]] ~ "C",
+                                      {{y}} >= quantile({{y}}, 0.75)[[1]] ~ "D"
                              )) %>%
     mutate(happiness_level.y=as.factor(happiness_level.y))
 }
 ```
 
-```{r}
+```{r test the get_level function}
 get_level(df1, happiness_rank.x, happiness_rank.y) %>% 
   select(happiness_rank.x, happiness_level.x, happiness_rank.y, happiness_level.y) %>% 
   assert(in_set("A","B","C","D", allow.na = FALSE), happiness_level.x) %>% 
   assert(in_set("A","B","C","D", allow.na = FALSE), happiness_level.y)
 ```
 
-```{r}
+I observed that the parameters we have here can be devided into two groups, personal satisfaction and social satisfaction. In the personal satisfaction, I will include family.x, health_life_expectancy.x, freedom.x, generosity.x, And for the social satisfaction, I will include the left, namely economy_gdp_per_capita.x, trust_government_corruption.x, dystopia_residual.x. 
+```{r personal satisfaction function}
 get_personal_satis <- function(df,a,b,c,d){
   df %>%
     mutate(personal_satis = {{a}}+{{b}}+{{c}}+{{d}})
 }
-get_social_satis <- function(df,a,b,c){
-  df %>%
-    mutate(social_satis = {{a}}+{{b}}+{{c}})
-}
+#get_social_satis funciton
 ```
 
-```{r}
+```{r test get_personal_satis}
 get_personal_satis(df1, family.x, health_life_expectancy.x, freedom.x, generosity.x) %>% 
   get_social_satis(economy_gdp_per_capita.x, trust_government_corruption.x, dystopia_residual.x) %>% 
   select(country, personal_satis, social_satis) %>% 

@@ -3,14 +3,21 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+Now we are applying all the funciton we created. 
 ```{r}
 df_fe <- df1 %>% 
   Happiness_Rank_Difference(happiness_rank.y, happiness_rank.x) %>% 
   Economics_Difference(economy_gdp_per_capita.y, economy_gdp_per_capita.x) %>%
   Family_Difference(family.y,family.x) %>% 
-  Health_Difference(health_life_expectancy.y,health_life_expectancy.x) %>% 
+  #Health_Difference() %>% 
   get_continent(country) %>% 
   get_level(happiness_rank.x, happiness_rank.y) %>% 
-  get_personal_satis(family.x, health_life_expectancy.x, freedom.x, generosity.x)
+  get_personal_satis(family.x, health_life_expectancy.x, freedom.x, generosity.x) #%>% 
+  #get_social_satis()
+```
+
+Take a glance of the df_fe
+```{r}
+head(df_fe, n=10)
 ```
 

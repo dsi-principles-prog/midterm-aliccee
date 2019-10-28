@@ -14,7 +14,7 @@ The dataset that I chosen is happiness 2016-2017 dataset, one of Kaggle’s data
 The purpose of choosing this work is to find out which factors are more important to live a happier life. As a result, people and countries can focus on the more significant factors to achieve a higher happiness level. We also will implement several machine learning algorithms to predict the happiness score and compare the result to discover which algorithm works better for this specific dataset.
 
 
-```{r}
+```{r libraries}
 library(readr)
 library(tidyverse)
 library(janitor)
@@ -22,21 +22,21 @@ library(assertr)
 ```
 
 
-```{r}
+```{r read data and clean names}
 happy2016 <- read_csv("data/2016.csv") %>%
   clean_names() 
 happy2017 <- read_csv("data/2017.csv")%>%
   clean_names() 
 ```
 
-```{r}
+```{r check the structure}
 str(happy2016)
 str(happy2017)
 ```
 
 
 
-```{r}
+```{r select colomn I interested and combine them together} 
 use2016 <- happy2016[c(1,3,7,8,9,10,11,12,13)]
 use2017 <- happy2017[c(1,2,6,7,8,9,10,11,12)]
 
@@ -45,7 +45,7 @@ df<- merge(use2016, use2017,
            by.y = "country")
 ```
 
-```{r}
+```{r get the colomn name}
 colnames(df)
 ```
 
@@ -62,7 +62,7 @@ df %>%
 ```
 
 
-```{r}
+```{r get rid of NAs}
 df1 <- na.omit(df)
 ```
 

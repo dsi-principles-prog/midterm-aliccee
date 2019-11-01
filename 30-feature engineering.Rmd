@@ -24,14 +24,16 @@ options(scipen = 50)
 Health_Difference <- function(df,x,y) {
   
   df %>% 
-    mutate(Health_Difference = {{y}} - {{x}})
+    mutate(Health_Difference = {{y}} - {{x}}) %>% 
+    select(Health_Difference, everything()) %>% 
+    arrange(-Health_Difference)
 }
 
 
 df1 %>% 
 Health_Difference(health_life_expectancy.x, health_life_expectancy.y ) %>% 
-  select(Health_Difference, everything()) %>% 
-  arrange(-Health_Difference) %>% 
+ # select(Health_Difference, everything()) %>% 
+ # arrange(-Health_Difference) %>% 
   assert(within_bounds(-1,1),Health_Difference)
 
 ```
@@ -50,10 +52,12 @@ The assert statements to show the values lie within the maximum and minimum boun
 
 ```{r adding economy_gdp_per_capita.x, trust_government_corruption.x and dystopia_residual.x to determine Social Satisfaction Score }
 
-social_satisfaction_score <-  function(df,x,y,z) {
+get_social_satis <-  function(df,x,y,z) {
   
   df %>% 
-    mutate(social_satis = {{x}} + {{y}} + {{z}})
+    mutate(social_satis = {{x}} + {{y}} + {{z}}) %>% 
+    select(social_satis, everything()) %>% 
+    arrange(-social_satis)
   
   
 }
@@ -61,8 +65,8 @@ social_satisfaction_score <-  function(df,x,y,z) {
 
 df1 %>% 
   get_social_satis(economy_gdp_per_capita.x, trust_government_corruption.x, dystopia_residual.x) %>% 
-  select(social_satis, everything()) %>% 
-  arrange(-social_satis) %>% 
+ # select(social_satis, everything()) %>% 
+ # arrange(-social_satis) %>% 
   assert(within_bounds(0,5), social_satis)
 
 

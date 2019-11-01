@@ -3,6 +3,74 @@ title: "30-feature-engineering"
 output: html_notebook
 ---
 
+
+
+# Midterm Second Half Arsalan Riaz
+
+Find the difference in health scores between 2016 and 2017.
+
+The function performs subtraction and adds a new column 'Health_Score_Diff' to the dataset df1.
+
+health life ecpectancy is one of the main factors in calculating the happiness score and rank. The higher the score the lesser the rank. In this function we are taking the difference between health life expectancy in 2017 and health life expectancy in 2016. The difference will show whether it is an overall rise or fall in the health life expectancy from 2016 to 2017. Positive values will denote a betterment and negative will denote a fall.
+
+Assert staement to confirm that the value never breaches -1 and 1.
+
+The scipen command is used to turn the differnce values received as a power of e into decimals
+
+
+```{r calculating the difference between health life expectancy in 2016 and 2017}
+
+options(scipen = 50)
+Health_Difference <- function(df,x,y) {
+  
+  df %>% 
+    mutate(Health_Difference = {{y}} - {{x}})
+}
+
+
+df1 %>% 
+Health_Difference(health_life_expectancy.x, health_life_expectancy.y ) %>% 
+  select(Health_Difference, everything()) %>% 
+  arrange(-Health_Difference) %>% 
+  assert(within_bounds(-1,1),Health_Difference)
+
+```
+
+
+# Problem 2: This is simply an addition function on three variables
+
+You should combine these parameters towards social satisfaction, which including economy_gdp_per_capita.x, trust_government_corruption.x, dystopia_residual.x.
+
+.x denotes the values of 2016
+
+In order to know the social satisfaction score i.e. social satis from the data we wil need to add economy_gdp_per_capita.x(The extent to which GDP contributes to the calculation of the Happiness Score), trust_government_corruption.x (The extent to which Perception of Corruption contributes to Happiness Score) and dystopia_residual.x (Dystopia is an imaginary country that has the world’s least happy people, while residuals refer to the unexplained components that contribute to a country’s happiness). All of these scores add up to determine the social satisfaction score and play an integeral part in determining the happiness score and rank as well.
+The assert statements to show the values lie within the maximum and minimum bounds of the data i.e. 0 and 5
+
+
+
+```{r adding economy_gdp_per_capita.x, trust_government_corruption.x and dystopia_residual.x to determine Social Satisfaction Score }
+
+get_social_satis <-  function(df,x,y,z) {
+  
+  df %>% 
+    mutate(social_satis = {{x}} + {{y}} + {{z}})
+  
+  
+}
+
+
+df1 %>% 
+  get_social_satis(economy_gdp_per_capita.x, trust_government_corruption.x, dystopia_residual.x) %>% 
+  select(social_satis, everything()) %>% 
+  arrange(-social_satis) %>% 
+  assert(within_bounds(0,5), social_satis)
+
+
+```
+
+
+
+
 Right now, we want to calculate the differnce of each parameters. This can help us to see if the changes in rating matches the changes of each countries' happiness score. 
 
 ```{r difference in happiness rank}

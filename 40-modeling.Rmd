@@ -3,17 +3,21 @@ title: "R Notebook"
 output: html_notebook
 ---
 
+# applying the new made function i.e. get_social_satis and Health_Difference. Also, checing the integrity of the values by assert statements
+
 Now we are applying all the funciton we created. 
-```{r}
+```{r adding two new function i.e. get_social_satis and Health_Difference and adding asserts}
 df_fe <- df1 %>% 
   Happiness_Rank_Difference(happiness_rank.y, happiness_rank.x) %>% 
   Economics_Difference(economy_gdp_per_capita.y, economy_gdp_per_capita.x) %>%
   Family_Difference(family.y,family.x) %>% 
-  #Health_Difference() %>% 
+  Health_Difference(health_life_expectancy.x, health_life_expectancy.y) %>% 
   get_continent(country) %>% 
   get_level(happiness_rank.x, happiness_rank.y) %>% 
-  get_personal_satis(family.x, health_life_expectancy.x, freedom.x, generosity.x) #%>% 
-  #get_social_satis()
+  get_personal_satis(family.x, health_life_expectancy.x, freedom.x, generosity.x) %>% 
+  get_social_satis(economy_gdp_per_capita.x, trust_government_corruption.x, dystopia_residual.x) %>% 
+  assert(within_bounds(-1,1),Health_Difference) %>% 
+  assert(within_bounds(0,5), social_satis)
 ```
 
 Take a glance of the df_fe

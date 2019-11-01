@@ -17,7 +17,8 @@ df_fe <- df1 %>%
   get_personal_satis(family.x, health_life_expectancy.x, freedom.x, generosity.x) %>% 
   get_social_satis(economy_gdp_per_capita.x, trust_government_corruption.x, dystopia_residual.x) %>% 
   assert(within_bounds(-1,1),Health_Difference) %>% 
-  assert(within_bounds(0,5), social_satis)
+  assert(within_bounds(0,5), social_satis) %>% 
+  select(social_satis, Health_Difference, everything())
 ```
 
 Take a glance of the df_fe

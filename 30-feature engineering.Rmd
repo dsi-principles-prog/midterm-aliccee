@@ -50,7 +50,7 @@ The assert statements to show the values lie within the maximum and minimum boun
 
 ```{r adding economy_gdp_per_capita.x, trust_government_corruption.x and dystopia_residual.x to determine Social Satisfaction Score }
 
-get_social_satis <-  function(df,x,y,z) {
+social_satisfaction_score <-  function(df,x,y,z) {
   
   df %>% 
     mutate(social_satis = {{x}} + {{y}} + {{z}})
